@@ -104,3 +104,8 @@ html, body {
 .button-extend {
     width: 100%;
 }
+
+.del, .clear, .equals {
+    background-color: #ff874f;
+    color: rgb(119, 0, 0);
+}
