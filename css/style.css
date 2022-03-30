@@ -40,6 +40,8 @@ html, body {
 }
 
 .calculator-display {
+    display: flex;
+    flex-flow: row wrap;
     border: 2px dashed #ff7b00;
     margin: 1em 1em 1em 1em;
     width: 25.5em;
@@ -49,11 +51,22 @@ html, body {
     color: #da4500;
 }
 
-.calculator-display .display {
+.equation-display {
+    width: 100%;
+    margin: 0.5em 0.5em 0em 0.5em;
+    overflow: hidden;
+
+    font-size: 40px;
+}
+
+.result-display {
+    width: 100%;
+    margin: 0em 0.5em 0em 0.5em;
+
+    text-align: right;
     font-size: 60px;
     word-wrap: break-word;
 }
-
 
 .calculator-buttons {
     display: flex;

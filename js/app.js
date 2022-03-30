@@ -1,10 +1,13 @@
 
 function getCalculator() {
     let textReset = '';
-    let textDisplay = textReset;
+    let textEquation = textReset;
+    let textResult = textReset;
     let hasDecimal = false;
     let isEval = false;
-    let elementDisplay = document.querySelector('.calculator-display .display');
+    let numCharRet = 9;
+    let elementEquationDisplay = document.querySelector('.equation-display');
+    let elementResultDisplay = document.querySelector('.result-display');
     let elementAllButtons = Array.from(
         document.querySelectorAll('.button'));
 
@@ -12,6 +15,32 @@ function getCalculator() {
         elementButton.addEventListener(
             'click', getDisplay(elementButton));
     })
+
+    addKeyboardSupport();
+
+
+    /** add keyboard support to calculator through 
+     *window.addEventListener
+     *
+     * @returns none
+     */
+    function addKeyboardSupport() {
+        window.addEventListener('keydown', (e) => {
+            let objKey = {
+                '1': '1', '2': '2', '3': '3', 
+                '4': '4', '5': '5', '6': '6', 
+                '7': '7', '8': '8', '9': '9', 
+                '0': '0', '.': '.', 'Backspace': 'DEL', 
+                'Escape': 'AC', 'Enter': '=', 
+                '+': '+', '-': '-', 'x': 'x', '/': '/'
+            }
+            for (let key in objKey) {
+                if (e.key === key) {
+                    elementAllButtons.find((element) => element.firstElementChild.textContent === objKey[key]).click();
+                }                
+            }
+        });
+    }
 
 
     /** display on the calculator when any buttons clicked
@@ -21,7 +50,8 @@ function getCalculator() {
     function getDisplay(elementButton) {
         return () => {
             if (isEval) {
-                textDisplay = clearDisplay()();
+                textEquation = clearDisplay()();
+                elementResultDisplay.textContent = textEquation;
             }
 
             let textButton = elementButton
@@ -30,32 +60,34 @@ function getCalculator() {
 
             switch(textButton) {
                 case 'AC':
-                    textDisplay = clearDisplay()();
+                    textEquation = clearDisplay()();
+                    elementResultDisplay.textContent = textEquation;
                     break;
                 case 'DEL':
-                    textDisplay = delDisplay()();
+                    textEquation = delDisplay()();
                     break;
                 case '=':
-                    textDisplay = getResult()();
+                    textResult = getResult()();
+                    elementResultDisplay.textContent = textResult;
                     break;
                 case '+':
-                    textDisplay += getOperator(textButton);
+                    textEquation += getOperator(textButton);
                     break;
                 case '-':
-                    textDisplay += getOperator(textButton);
+                    textEquation += getOperator(textButton);
                     break;
                 case 'x':
-                    textDisplay += getOperator(textButton);
+                    textEquation += getOperator(textButton);
                     break;
                 case '/':
-                    textDisplay += getOperator(textButton);
+                    textEquation += getOperator(textButton);
                     break;
                 default:
                     hasDecimal && checkDecimalButton ? 
-                    {} : (textDisplay += `${textButton}`);
+                    {} : (textEquation += `${textButton}`);
                     checkDecimalButton ? hasDecimal = true : {};
             }
-            elementDisplay.textContent = textDisplay;
+            elementEquationDisplay.textContent = textEquation;
         }
     }
 
@@ -67,15 +99,15 @@ function getCalculator() {
      */
     function delDisplay() {
         return () => {
-            textDisplay = textDisplay.split('');
-            delText = textDisplay.pop();
+            textEquation = textEquation.split('');
+            delText = textEquation.pop();
             if (delText === '.') {hasDecimal = false;}
             if (delText === ' ') {   // Popping operators
-                textDisplay.pop();
-                textDisplay.pop();
+                textEquation.pop();
+                textEquation.pop();
             };
-            textDisplay = textDisplay.join('')
-            return textDisplay;
+            textEquation = textEquation.join('')
+            return textEquation;
         };
     }
 
@@ -86,10 +118,10 @@ function getCalculator() {
      */
     function clearDisplay() {
         return () => {
-            textDisplay = textReset;
+            textEquation = textReset;
             isEval = false;
             hasDecimal = false;
-            return textDisplay;
+            return textEquation;
         };
     }
 
@@ -100,20 +132,20 @@ function getCalculator() {
      */
     function getResult() {
         return () => {
-            textDisplay = textDisplay
+            textResult = textEquation
                     .replace('(', '( ')
                     .replace(')', ' )');
-            let evalEntities = textDisplay.split(' ');
+            let evalEntities = textResult.split(' ');
 
             evalEntities.unshift('(');
             evalEntities.push(')');
             console.log(evalEntities);
 
-            textDisplay = dijkstraEval(
+            textResult = dijkstraEval(
                 addParen(evalEntities));
             isEval = true;
 
-            return textDisplay;
+            return textResult;
         };
     }
 
@@ -128,7 +160,7 @@ function getCalculator() {
         let textOperator = '';
 
         // check if text displayed is being led with an operator
-        textDisplay === '' ? textOperator += '0' : {};
+        textEquation === '' ? textOperator += '0' : {};
 
         textOperator += ` ${textButton} `;
         hasDecimal = false;
@@ -203,9 +235,11 @@ function getCalculator() {
             }
             else vals.push(item);
         }
-        return Math.round(vals.pop() * 100000000000000
-        )/100000000000000;  // round to 
-                            // nearest .00000000000000
+        ret = vals.pop();
+        if (ret.toString().length > numCharRet) {
+            ret = ret.toExponential(5);
+        }
+        return ret;  
     }
 
     /* Add 2 numbers and return the result */
