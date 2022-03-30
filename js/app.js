@@ -2,7 +2,8 @@
 
 
 function getCalculator() {
-    let currentDisplayText = '';
+    let textResetDisplay = '';
+    let currentDisplayText = textResetDisplay;
     let alreadyDecimal = false;
     let alreadyEval = false;
     let elementDisplay = document.querySelector('.calculator-display .display');
@@ -39,7 +40,7 @@ function getCalculator() {
 
     function clearDisplay() {
         return () => {
-            currentDisplayText = '';
+            currentDisplayText = textResetDisplay;
             elementDisplay.textContent = currentDisplayText;
             alreadyEval = false;
             alreadyDecimal = false;
@@ -48,19 +49,20 @@ function getCalculator() {
 
     function getDisplay(button) {
         return () => {
-            let decimalButton = button.firstElementChild.textContent === '.';
+            let buttonText = button.firstElementChild.textContent;
+            let decimalButton = buttonText === '.';
 
             if (alreadyEval) {
                 clearDisplay()();
             }
 
             if (Array.from(button.classList).includes('button-op')) {
-                currentDisplayText += ` ${button.firstElementChild.textContent} `;
+                currentDisplayText += ` ${buttonText} `;
                 alreadyDecimal ? alreadyDecimal = false : {};
 
             } else {
                 alreadyDecimal && decimalButton ? {} : 
-                currentDisplayText += `${button.firstElementChild.textContent}`;
+                currentDisplayText += `${buttonText}`;
                 decimalButton ? alreadyDecimal = true : {};
             }
             elementDisplay.textContent = currentDisplayText;
