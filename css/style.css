@@ -1,0 +1,106 @@
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+.big-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5em 5em 5em 5em;
+}
+
+.header-container {
+    background-color: #3b1402;
+}
+
+.footer-container {
+    background-color: #3b1402;
+}
+
+.footer-github {
+    color: white;
+    font-size: large;
+    font-family: monospace;
+    text-decoration: none;
+}
+
+.calculator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-flow: row wrap;
+    height: 40em;
+    width: 28em;
+
+    background-color: #fdddb5;
+}
+
+.calculator-display {
+    border: 2px dashed #ff7b00;
+    margin: 1em 1em 1em 1em;
+    width: 25.5em;
+    height: 10em;
+
+    background-color: #ffd3aa;
+    color: #da4500;
+}
+
+.calculator-display .display {
+    font-size: 60px;
+    word-wrap: break-word;
+}
+
+
+.calculator-buttons {
+    display: flex;
+    flex-flow: row nowrap;
+    border: 1px solid #8b0000;
+    margin: 1em 1em 1em 1em;
+}
+
+.number-buttons {
+    height: 100%;
+}
+
+.operator-buttons {
+    height: 100%;
+}
+
+.line {
+    display: flex;
+    flex-flow: row nowrap;
+    width: 100%;
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #8b0000;
+    min-width: 5em;
+    max-width: 100%;
+    height: 5em;
+
+    background-color: #fdba9a;
+    color: #7e2800;
+}
+
+.button:hover {
+    cursor: pointer;
+}
+
+.button:active {
+    background-color: #ffa4a4;
+}
+
+.button-content {
+    font-size: 35px;
+}
+
+.button-extend {
+    width: 100%;
+}
