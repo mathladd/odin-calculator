@@ -1,90 +1,149 @@
 
-
-
 function getCalculator() {
-    let textResetDisplay = '';
-    let currentDisplayText = textResetDisplay;
-    let alreadyDecimal = false;
-    let alreadyEval = false;
+    let textReset = '';
+    let textDisplay = textReset;
+    let hasDecimal = false;
+    let isEval = false;
     let elementDisplay = document.querySelector('.calculator-display .display');
-    let allButtons = Array.from(document.querySelectorAll('.button'));
+    let elementAllButtons = Array.from(
+        document.querySelectorAll('.button'));
 
-    allButtons.map((button) => {
-        if (button.firstElementChild.textContent === 'DEL') {
-            button.addEventListener('click', delDisplay());
-        } else if (button.firstElementChild.textContent === 'AC') {
-            button.addEventListener('click', clearDisplay());
-        } else if (button.firstElementChild.textContent === '=') {
-            button.addEventListener('click', getResult());
-        } else {
-            button.addEventListener('click', getDisplay(button));
-        }
+    elementAllButtons.map((elementButton) => {
+        elementButton.addEventListener(
+            'click', getDisplay(elementButton));
     })
 
 
-    function delDisplay() {
+    /** display on the calculator when any buttons clicked
+     * 
+     * @returns none
+     */
+    function getDisplay(elementButton) {
         return () => {
-            currentDisplayText = currentDisplayText.split('');
-            delText = currentDisplayText.pop();
-            if (delText === '.') {
-                alreadyDecimal = false;
-            }
-            if (delText === ' ') {   // Popping operators
-                currentDisplayText.pop();
-                currentDisplayText.pop();
-            };
-            currentDisplayText = currentDisplayText.join('')
-            elementDisplay.textContent = currentDisplayText;
-        };
-    }
-
-    function clearDisplay() {
-        return () => {
-            currentDisplayText = textResetDisplay;
-            elementDisplay.textContent = currentDisplayText;
-            alreadyEval = false;
-            alreadyDecimal = false;
-        };
-    }
-
-    function getDisplay(button) {
-        return () => {
-            let buttonText = button.firstElementChild.textContent;
-            let decimalButton = buttonText === '.';
-
-            if (alreadyEval) {
-                clearDisplay()();
+            if (isEval) {
+                textDisplay = clearDisplay()();
             }
 
-            if (Array.from(button.classList).includes('button-op')) {
-                currentDisplayText += ` ${buttonText} `;
-                alreadyDecimal ? alreadyDecimal = false : {};
+            let textButton = elementButton
+                            .firstElementChild.textContent;
+            let checkDecimalButton = textButton === '.';
 
-            } else {
-                alreadyDecimal && decimalButton ? {} : 
-                currentDisplayText += `${buttonText}`;
-                decimalButton ? alreadyDecimal = true : {};
+            switch(textButton) {
+                case 'AC':
+                    textDisplay = clearDisplay()();
+                    break;
+                case 'DEL':
+                    textDisplay = delDisplay()();
+                    break;
+                case '=':
+                    textDisplay = getResult()();
+                    break;
+                case '+':
+                    textDisplay += getOperator(textButton);
+                    break;
+                case '-':
+                    textDisplay += getOperator(textButton);
+                    break;
+                case 'x':
+                    textDisplay += getOperator(textButton);
+                    break;
+                case '/':
+                    textDisplay += getOperator(textButton);
+                    break;
+                default:
+                    hasDecimal && checkDecimalButton ? 
+                    {} : (textDisplay += `${textButton}`);
+                    checkDecimalButton ? hasDecimal = true : {};
             }
-            elementDisplay.textContent = currentDisplayText;
+            elementDisplay.textContent = textDisplay;
         }
     }
 
-    function getResult() {
+
+    /** delete the latest added op/val when user click "DEL"
+     * 
+     * @returns text to be displayed to user
+     * with the op/val deleted
+     */
+    function delDisplay() {
         return () => {
-            currentDisplayText = currentDisplayText.replace('(', '( ')
-            currentDisplayText = currentDisplayText.replace(')', ' )')
-            let evalEntitiesOriginal = currentDisplayText.split(' ');
-            
-            evalEntitiesOriginal.push(')');
-            evalEntitiesOriginal.unshift('(');
-
-            let evalEntities = addParen(evalEntitiesOriginal);
-            elementDisplay.textContent = calculatorEval(evalEntities);
-
-            alreadyEval = true;
+            textDisplay = textDisplay.split('');
+            delText = textDisplay.pop();
+            if (delText === '.') {hasDecimal = false;}
+            if (delText === ' ') {   // Popping operators
+                textDisplay.pop();
+                textDisplay.pop();
+            };
+            textDisplay = textDisplay.join('')
+            return textDisplay;
         };
     }
 
+
+    /** clear display when user click "AC"
+     * 
+     * @returns reset text to be displayed to user
+     */
+    function clearDisplay() {
+        return () => {
+            textDisplay = textReset;
+            isEval = false;
+            hasDecimal = false;
+            return textDisplay;
+        };
+    }
+
+
+    /** get result when user click "="
+     * 
+     * @returns text to be displayed to user
+     */
+    function getResult() {
+        return () => {
+            textDisplay = textDisplay
+                    .replace('(', '( ')
+                    .replace(')', ' )');
+            let evalEntities = textDisplay.split(' ');
+
+            evalEntities.unshift('(');
+            evalEntities.push(')');
+            console.log(evalEntities);
+
+            textDisplay = dijkstraEval(
+                addParen(evalEntities));
+            isEval = true;
+
+            return textDisplay;
+        };
+    }
+
+
+    /** Get operator text to be added to user text displayed
+     * when they click an operator button
+     * 
+     * @param {string} textButton raw button text
+     * @returns operator text
+     */
+     function getOperator(textButton) {
+        let textOperator = '';
+
+        // check if text displayed is being led with an operator
+        textDisplay === '' ? textOperator += '0' : {};
+
+        textOperator += ` ${textButton} `;
+        hasDecimal = false;
+        return textOperator;
+    }
+    
+
+    /** Add parentheses to array of ops and vals 
+     * to be put into Dijkstra's algorithm
+     * 
+     * @param {Array} b Original array to add 
+     * parentheses to
+     * @returns new array a with parentheses added 
+     * at mathematically correct locations
+     */
     function addParen(b) {
         let a = [];
         let p = [];  // paren stack
@@ -97,7 +156,7 @@ function getCalculator() {
                 a.push(b[i]);
             } else {
                 a.push(Number(b[i]));
-                (p.length > 0) ? a.push(p.pop()) : {};
+                p.length > 0 ? a.push(p.pop()) : {};
             }
         }
 
@@ -109,14 +168,20 @@ function getCalculator() {
                 a.push(p.pop());
             }
         }
-        console.log(a);
         return a;
     }
 
-    function calculatorEval(evalEntities) {
+
+    /** Dijkstra's algorithm implementation
+     * 
+     * @param {Array} a array of ops and vals
+     * to be evaluated
+     * @returns calculated result
+     */
+    function dijkstraEval(a) {
         let ops = [];
         let vals = [];
-        for (let item of evalEntities) {
+        for (let item of a) {
             if      (item === "(") {}
             else if (item === "+") {ops.push(item);}
             else if (item === "-") {ops.push(item);}
@@ -138,38 +203,31 @@ function getCalculator() {
             }
             else vals.push(item);
         }
-        return Math.round(vals.pop() * 100000000000000)/100000000000000;  // round to nearest .00000000000000
+        return Math.round(vals.pop() * 100000000000000
+        )/100000000000000;  // round to 
+                            // nearest .00000000000000
     }
 
+    /* Add 2 numbers and return the result */
     function add(a, b) {
         return a + b;
     };
     
+    /* Subtract 2 numbers and return the result */
     function subtract(a, b) {
         return a - b;
     };
 
+    /* Multiply 2 numbers and return the result */
     function multiply(a, b) {
         return a * b;
     };
     
+    /* Divide 2 numbers and return the result */
     function divide(a, b) {
         return a / b;
     };
 }
-
-
-// function getDisplay(button, currentDisplayText, elementDisplay) {
-// }
-
-// module.exports = {
-//     add,
-//     subtract,
-//     sum,
-//     multiply,
-//     power,
-//     factorial
-// };
 
 
 window.onload = () => {
