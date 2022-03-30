@@ -51,7 +51,7 @@ function getCalculator() {
     function getDisplay(elementButton) {
         return () => {
             if (isEval) {
-                textEquation = clearDisplay()();
+                textEquation = getClearDisplay()();
                 elementResultDisplay.textContent = textEquation;
             }
 
@@ -61,11 +61,11 @@ function getCalculator() {
 
             switch(textButton) {
                 case 'AC':
-                    textEquation = clearDisplay()();
+                    textEquation = getClearDisplay()();
                     elementResultDisplay.textContent = textEquation;
                     break;
                 case 'DEL':
-                    textEquation = delDisplay()();
+                    textEquation = getDelDisplay()();
                     break;
                 case '=':
                     textResult = getResult()();
@@ -100,7 +100,7 @@ function getCalculator() {
      * @returns text to be displayed to user
      * with the op/val deleted
      */
-    function delDisplay() {
+    function getDelDisplay() {
         return () => {
             textEquation = textEquation.split('');
             delText = textEquation.pop();
@@ -119,7 +119,7 @@ function getCalculator() {
      * 
      * @returns reset text to be displayed to user
      */
-    function clearDisplay() {
+    function getClearDisplay() {
         return () => {
             textEquation = textReset;
             isEval = false;
