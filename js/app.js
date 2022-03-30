@@ -5,6 +5,7 @@ function getCalculator() {
     let textResult = textReset;
     let hasDecimal = false;
     let isEval = false;
+    let numCharEquation = 15;
     let numCharRet = 9;
     let elementEquationDisplay = document.querySelector('.equation-display');
     let elementResultDisplay = document.querySelector('.result-display');
@@ -87,7 +88,9 @@ function getCalculator() {
                     {} : (textEquation += `${textButton}`);
                     checkDecimalButton ? hasDecimal = true : {};
             }
-            elementEquationDisplay.textContent = textEquation;
+            let textEquationLength = textEquation.toString().length;
+            let textEquationShow = textEquation.slice(Math.max(textEquationLength - numCharEquation, 0), textEquationLength);
+            elementEquationDisplay.textContent = textEquationShow;
         }
     }
 
@@ -139,7 +142,6 @@ function getCalculator() {
 
             evalEntities.unshift('(');
             evalEntities.push(')');
-            console.log(evalEntities);
 
             textResult = dijkstraEval(
                 addParen(evalEntities));
@@ -227,7 +229,7 @@ function getCalculator() {
                 else if (op === "x") {val = multiply(vals.pop(), val);}
                 else if (op === "/") {
                     if (val === 0) {
-                        return 'DIVISION BY 0';
+                        return 'DIV BY 0';
                     }
                     val = divide(vals.pop(), val);
                 }
