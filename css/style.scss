@@ -1,0 +1,138 @@
+@import "./__rsrc.scss";
+
+html {
+    @include custStyleHTML();
+}
+
+html, body {
+    @include custStyleDoc();
+}
+
+body {
+    @include custFontSizeBody();
+}
+
+.big-container {
+    @include custFlexCenterAll();
+    @include custStyleBigContainer();
+}
+
+.header-container {
+    @include custColorBg($colorBrownDark);
+}
+
+.header-title {
+    @include custFontSizeLarge();
+    @include custFontFamMono();
+    font-style: italic;
+}
+
+.footer-container {
+    @include custColorBg($colorBrownDark);
+}
+
+.footer-github {
+    @include custColorFnt($colorWhiteRed);
+    @include custFontSizeMed();
+    @include custFontFamMono();
+    text-decoration: none;
+}
+
+.calculator {
+    @include custFlexCenterAll();
+    flex-flow: row wrap;
+    height: 40em;
+    width: 28em;
+    border: 2px solid $colorPinkPastel;
+
+    @include custColorBg($colorOrangePastel);
+}
+
+.calculator-display {
+    @include custFlexCenterAll();
+    flex-flow: row wrap;
+    border: 2px dashed #ff7b00;
+    margin: 1em 1em 1em 1em;
+    width: 25.5em;
+    height: 10em;
+
+    @include custColorBg($colorOrangeLight);
+    @include custColorFnt($colorRed);
+}
+
+.equation-display {
+    width: 100%;
+    margin: 0.1em 0.5em 0em 0.5em;
+    
+    @include custFontFamMono();
+    @include custFontSizeLarge();
+}
+
+.result-display {
+    width: 100%;
+    height: 50%;
+    margin: 0em 0.5em 0em 0.5em;
+
+    text-align: right;
+    @include custFontSizeExtraLarge();
+    word-wrap: break-word;
+}
+
+.calculator-buttons {
+    @include custFlexCenterAll();
+    flex-flow: row nowrap;
+    border: 1px solid #8b0000;
+    margin: 1em 1em 1em 1em;
+}
+
+.number-buttons {
+    height: 100%;
+}
+
+.operator-buttons {
+    height: 100%;
+}
+
+.line {
+    @include custFlexCenterAll();
+    flex-flow: row nowrap;
+    width: 100%;
+}
+
+.button {
+    @include custFlexCenterAll();
+    border: 1px solid #8b0000;
+    min-width: 5em;
+    max-width: 100%;
+    height: 5em;
+
+    @include custColorBg($colorRedPastel);
+    @include custColorFnt($colorBrownDark);
+}
+
+.button:hover {
+    cursor: pointer;
+}
+
+.button:active {
+    @include custColorBg($colorRedDark);
+    @include custColorFnt($colorWhiteRed);
+}
+
+.button-content {
+    @include custFontSizeLarge();
+}
+
+.button-extend {
+    width: 100%;
+}
+
+.button-special {
+    @include custColorBg($colorRed);
+    @include custColorFnt($colorWhiteRed);
+}
+
+.button-op {
+    @include custColorBg($colorRed);
+    @include custColorFnt($colorWhiteRed);
+}

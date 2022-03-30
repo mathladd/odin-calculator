@@ -1,16 +1,27 @@
 
 function getCalculator() {
+    let textHeaderColor = 'rgb(255, 150, 217)';
+    let textHeaderColorAlt = 'rgb(255, 221, 194)';
+
     let textReset = '';
     let textEquation = textReset;
     let textResult = textReset;
     let hasDecimal = false;
     let isEval = false;
-    let numCharEquation = 15;
-    let numCharRet = 9;
+    let numCharEquationMax = 15;
+    let numCharRetMax = 9;
+
+    let elementTitle = document.querySelector('.header-title');
     let elementEquationDisplay = document.querySelector('.equation-display');
     let elementResultDisplay = document.querySelector('.result-display');
     let elementAllButtons = Array.from(
         document.querySelectorAll('.button'));
+
+    elementTitle.style['color'] = textHeaderColor;
+    setInterval(() => {
+        elementTitle.style['color'] = 
+        (elementTitle.style['color'] === textHeaderColor ? textHeaderColorAlt : textHeaderColor);
+    }, 500);
 
     elementAllButtons.map((elementButton) => {
         elementButton.addEventListener(
@@ -89,7 +100,7 @@ function getCalculator() {
                     checkDecimalButton ? hasDecimal = true : {};
             }
             let textEquationLength = textEquation.toString().length;
-            let textEquationShow = textEquation.slice(Math.max(textEquationLength - numCharEquation, 0), textEquationLength);
+            let textEquationShow = textEquation.slice(Math.max(textEquationLength - numCharEquationMax + 1, 0), textEquationLength);
             elementEquationDisplay.textContent = textEquationShow;
         }
     }
@@ -236,8 +247,8 @@ function getCalculator() {
             else vals.push(item);
         }
         ret = vals.pop();
-        if (ret.toString().length > numCharRet) {
-            ret = ret.toExponential(5);
+        if (ret.toString().length > numCharRetMax) {
+            ret = ret.toExponential(4);
         }
         return ret;  
     }
