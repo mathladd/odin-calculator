@@ -14,7 +14,7 @@ function getCalculator() {
 
     elementAllButtons.map((elementButton) => {
         elementButton.addEventListener(
-            'click', getDisplay(elementButton));
+            'click', updateDisplay(elementButton));
     })
 
     addKeyboardSupport();
@@ -48,10 +48,10 @@ function getCalculator() {
      * 
      * @returns none
      */
-    function getDisplay(elementButton) {
+    function updateDisplay(elementButton) {
         return () => {
             if (isEval) {
-                textEquation = getClearDisplay()();
+                textEquation = updateClearedEq()();
                 elementResultDisplay.textContent = textEquation;
             }
 
@@ -61,27 +61,27 @@ function getCalculator() {
 
             switch(textButton) {
                 case 'AC':
-                    textEquation = getClearDisplay()();
+                    textEquation = updateClearedEq()();
                     elementResultDisplay.textContent = textEquation;
                     break;
                 case 'DEL':
-                    textEquation = getDelDisplay()();
+                    textEquation = updateDelEq()();
                     break;
                 case '=':
                     textResult = getResult()();
                     elementResultDisplay.textContent = textResult;
                     break;
                 case '+':
-                    textEquation += getOperator(textButton);
+                    textEquation += getOperatorEq(textButton);
                     break;
                 case '-':
-                    textEquation += getOperator(textButton);
+                    textEquation += getOperatorEq(textButton);
                     break;
                 case 'x':
-                    textEquation += getOperator(textButton);
+                    textEquation += getOperatorEq(textButton);
                     break;
                 case '/':
-                    textEquation += getOperator(textButton);
+                    textEquation += getOperatorEq(textButton);
                     break;
                 default:
                     hasDecimal && checkDecimalButton ? 
@@ -100,7 +100,7 @@ function getCalculator() {
      * @returns text to be displayed to user
      * with the op/val deleted
      */
-    function getDelDisplay() {
+    function updateDelEq() {
         return () => {
             textEquation = textEquation.split('');
             delText = textEquation.pop();
@@ -119,7 +119,7 @@ function getCalculator() {
      * 
      * @returns reset text to be displayed to user
      */
-    function getClearDisplay() {
+    function updateClearedEq() {
         return () => {
             textEquation = textReset;
             isEval = false;
@@ -135,19 +135,17 @@ function getCalculator() {
      */
     function getResult() {
         return () => {
-            textResult = textEquation
+            let result = textEquation
                     .replace('(', '( ')
                     .replace(')', ' )');
-            let evalEntities = textResult.split(' ');
+            result = result.split(' ');
+            result.unshift('(');
+            result.push(')');
 
-            evalEntities.unshift('(');
-            evalEntities.push(')');
-
-            textResult = dijkstraEval(
-                addParen(evalEntities));
+            result = dijkstraEval(addParen(result));
             isEval = true;
 
-            return textResult;
+            return result;
         };
     }
 
@@ -158,7 +156,7 @@ function getCalculator() {
      * @param {string} textButton raw button text
      * @returns operator text
      */
-     function getOperator(textButton) {
+     function getOperatorEq(textButton) {
         let textOperator = '';
 
         // check if text displayed is being led with an operator
