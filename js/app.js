@@ -2,11 +2,11 @@
 
 
 function getCalculator() {
-    let currentDisplayText = ''
-    let numOperators = 0;
-    let elementDisplay = document.querySelector('.calculator-display .display')
-    let allButtons = Array.from(document.querySelectorAll('.button'))
+    let currentDisplayText = '';
+    let alreadyDecimal = false;
     let alreadyEval = false;
+    let elementDisplay = document.querySelector('.calculator-display .display');
+    let allButtons = Array.from(document.querySelectorAll('.button'));
 
     allButtons.map((button) => {
         if (button.firstElementChild.textContent === 'DEL') {
@@ -24,7 +24,11 @@ function getCalculator() {
     function delDisplay() {
         return () => {
             currentDisplayText = currentDisplayText.split('');
-            if (currentDisplayText.pop() == ' ') {   // Popping operators
+            delText = currentDisplayText.pop();
+            if (delText === '.') {
+                alreadyDecimal = false;
+            }
+            if (delText === ' ') {   // Popping operators
                 currentDisplayText.pop();
                 currentDisplayText.pop();
             };
@@ -37,21 +41,27 @@ function getCalculator() {
         return () => {
             currentDisplayText = '';
             elementDisplay.textContent = currentDisplayText;
+            alreadyEval = false;
+            alreadyDecimal = false;
         };
     }
 
     function getDisplay(button) {
         return () => {
+            let decimalButton = button.firstElementChild.textContent === '.';
+
             if (alreadyEval) {
                 clearDisplay()();
-                alreadyEval = false;
             }
 
             if (Array.from(button.classList).includes('button-op')) {
                 currentDisplayText += ` ${button.firstElementChild.textContent} `;
-                numOperators += 1;
+                alreadyDecimal ? alreadyDecimal = false : {};
+
             } else {
-                currentDisplayText += `${button.firstElementChild.textContent}`
+                alreadyDecimal && decimalButton ? {} : 
+                currentDisplayText += `${button.firstElementChild.textContent}`;
+                decimalButton ? alreadyDecimal = true : {};
             }
             elementDisplay.textContent = currentDisplayText;
         }
@@ -62,48 +72,43 @@ function getCalculator() {
             currentDisplayText = currentDisplayText.replace('(', '( ')
             currentDisplayText = currentDisplayText.replace(')', ' )')
             let evalEntitiesOriginal = currentDisplayText.split(' ');
-
+            
             evalEntitiesOriginal.push(')');
             evalEntitiesOriginal.unshift('(');
 
-            let evalEntities = addParen(evalEntitiesOriginal)();
-
+            let evalEntities = addParen(evalEntitiesOriginal);
             elementDisplay.textContent = calculatorEval(evalEntities);
+
             alreadyEval = true;
         };
     }
 
     function addParen(b) {
-        return () => {
-            let a = [];
-            let p = [];  // paren stack
-            for (let i=0; i<b.length; i++) {
-                if  (b[i] === 'x' || b[i] === '/') {
-                    a.splice(a.length-1, 0, '(');
-                    p.push(')');
-                }
-                if (isNaN(Number(b[i]))) {
-                    a.push(b[i]);
-                } else {
-                    a.push(Number(b[i]));
-                    if (p.length > 0) {
-                        a.push(p.pop());
-                    }
-                }
+        let a = [];
+        let p = [];  // paren stack
+        for (let i=0; i<b.length; i++) {
+            if  (b[i] === 'x' || b[i] === '/') {
+                a.splice(a.length-1, 0, '(');
+                p.push(')');
             }
-
-            for (let i=0; i<a.length; i++) {
-                if  (a[i] === '+' || a[i] === '-') {
-                    a.splice(a.length-1, 0, '(');
-                    p.push(')');
-                }
-                if (a[i] === ')' && p.length > 0) {
-                    a.push(p.pop());
-                }
+            if (isNaN(Number(b[i]))) {
+                a.push(b[i]);
+            } else {
+                a.push(Number(b[i]));
+                (p.length > 0) ? a.push(p.pop()) : {};
             }
-            console.log(a);
-            return a;
         }
+
+        for (let i=0; i<a.length; i++) {
+            if  (a[i] === '+' || a[i] === '-') {
+                a.splice(a.length-1, 0, '(');
+                p.push(')');
+            } else if (a[i] === ')' && p.length > 0) {
+                a.push(p.pop());
+            }
+        }
+        console.log(a);
+        return a;
     }
 
     function calculatorEval(evalEntities) {
@@ -131,7 +136,7 @@ function getCalculator() {
             }
             else vals.push(item);
         }
-        return vals.pop();
+        return Math.round(vals.pop() * 100000000000000)/100000000000000;  // round to nearest .00000000000000
     }
 
     function add(a, b) {
